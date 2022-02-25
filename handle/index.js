@@ -1,4 +1,4 @@
-import {isArray, isObject} from "./utils";
+import {isArray, isObject} from "../utils";
 
 /**
  * 获取目标字段值
@@ -33,7 +33,7 @@ export const handleResponseDataToList = (field = 'data') => (data = {}) => {
 export const handleResponseDataToMap = ({ labelKey = '', valueKey = '' }) => (list = []) => list.map(x => ({...x, label: x[labelKey], value: x[valueKey]}))
 
 // 获取缓存中的数据
-export const getCache = (type = 'localStorage') => ({ key, ...data }) => {
+export const getCache = (type = 'localStorage') => ({ key }) => {
   const value = window[type].getItem(key)
   let cache = null
   try {

@@ -1,5 +1,5 @@
 import { createDecorator } from '@inkefe/create-decorator'
-import { compose, pipe } from './utils'
+import { compose, pipe } from '../utils'
 
 // loading decorator
 export const getLoadingDecorator = (show, hide) => createDecorator(fn => async (...args) => {

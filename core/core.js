@@ -1,4 +1,4 @@
-import { isObject } from './utils'
+import { isObject } from '../utils'
 
 export const createDecorator = function(wrapper, ...args) {
   if (typeof wrapper !== 'function') throw Error('[create-decorator]: createDecorator Please pass in a higher-order function')
