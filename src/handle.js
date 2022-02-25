@@ -33,8 +33,8 @@ export const handleResponseDataToList = (field = 'data') => (data = {}) => {
 export const handleResponseDataToMap = ({ labelKey = '', valueKey = '' }) => (list = []) => list.map(x => ({...x, label: x[labelKey], value: x[valueKey]}))
 
 // 获取缓存中的数据
-export const getCache = ({ key, ...data }) => {
-  const value = localStorage.getItem(key);
+export const getCache = (type = 'localStorage') => ({ key, ...data }) => {
+  const value = window[type].getItem(key)
   let cache = null
   try {
     cache = JSON.parse(value)
@@ -51,11 +51,11 @@ export const getCache = ({ key, ...data }) => {
 }
 
 // 设置缓存数据
-export const setCache = ({ key, ...data }) => {
+export const setCache = (type = 'localStorage') => ({ key, ...data }) => {
   const value = JSON.stringify({
     ...data,
     expiration: +new Date()
   })
-  localStorage.setItem(key, value);
+  window[type].setItem(key, value)
   return data
 }
