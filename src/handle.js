@@ -1,4 +1,4 @@
-import {isArray, isObject} from "@/decorator/utils";
+import {isArray, isObject} from "./utils";
 
 /**
  * 获取目标字段值
