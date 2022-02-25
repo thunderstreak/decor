@@ -1,0 +1,17 @@
+{
+  "name": "decor",
+  "version": "1.0.0",
+  "description": "decorator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "decorator"
+  ],
+  "author": "typec",
+  "license": "ISC",
+  "dependencies": {
+    "@inkefe/create-decorator": "^0.1.6"
+  }
+}
