@@ -1,5 +1,5 @@
 {
-  "name": "decor",
+  "name": "decor-core",
   "version": "1.0.0",
   "description": "decorator",
   "main": "index.js",
