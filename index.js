@@ -1,4 +1,4 @@
-import { createDecorator } from '@inkefe/create-decorator'
+import { createDecorator } from './core'
 export * from './src/apply'
 
 export default createDecorator

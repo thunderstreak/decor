@@ -1,4 +1,4 @@
-import { createDecorator } from '@inkefe/create-decorator'
+import { createDecorator } from '../core'
 import { compose, pipe } from '../utils'
 
 // loading decorator
@@ -97,7 +97,7 @@ export const getPromptDecorator = (...config) => (handle, key) => createDecorato
 })
 
 // set response data compose pipe line
-const composePipe = (key = 'compose') => (...handle) => createDecorator(fn => async (...args) => {
+const composeOrPipe = (key = 'compose') => (...handle) => createDecorator(fn => async (...args) => {
   const data = await fn(...args)
   let res = () => {}
   if (key === 'compose') {
@@ -107,8 +107,8 @@ const composePipe = (key = 'compose') => (...handle) => createDecorator(fn => as
   }
   return res(data)
 })
-export const setComposeDecorator = composePipe('compose')
-export const setPipeDecorator = composePipe('pipe')
+export const setResponseComposeDecorator = composeOrPipe('compose')
+export const setResponsePipeDecorator = composeOrPipe('pipe')
 
 // get cache
 export const getCacheDecorator = (handle) => createDecorator(fn => async (...args) => {

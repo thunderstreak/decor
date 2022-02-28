@@ -1,6 +1,6 @@
 {
   "name": "decor-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "decorator",
   "main": "index.js",
   "scripts": {
@@ -12,6 +12,5 @@
   "author": "typec",
   "license": "ISC",
   "dependencies": {
-    "@inkefe/create-decorator": "^0.1.6"
   }
 }
