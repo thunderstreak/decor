@@ -8,7 +8,7 @@ export const handleGetTargetFiled = (data, field = '') => {
   for (const key in data) {
     const item = data[key]
     if (key === field) {
-      list = item
+      list = item || []
       return list
     } else if (isObject(item) || isArray(item)) {
       return handleGetTargetFiled(item, field)
