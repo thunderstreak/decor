@@ -2,18 +2,19 @@ import { createDecorator } from './core'
 export {
   getLoadingDecorator,
   getMessageDecorator,
-  setRequestLogDecorator,
   getMockDecorator,
+  getConfirmDecorator,
+  getPromptDecorator,
+  getCacheDecorator,
+  getCacheDataDecorator,
+
+  setExtraExtensionParameterDecorator,
   setRequestHeaderDecorator,
   setDelayDecorator,
   setResponseDataDecorator,
-  getConfirmDecorator,
-  setExtraExtensionParameterDecorator,
-  getPromptDecorator,
+  setRequestLogDecorator,
   setResponseComposeDecorator,
-  setResponsePipeDecorator,
-  getCacheDecorator,
-  getCacheDataDecorator
+  setResponsePipeDecorator
 } from './apply'
 
 export default createDecorator

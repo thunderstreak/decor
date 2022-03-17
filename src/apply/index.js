@@ -1,5 +1,7 @@
 import { createDecorator } from '../core'
 import { compose, pipe } from '../utils'
+import { DEVELOPMENT, COMPOSE, PIPE } from '../constant'
+const NODE_ENV = process.env.NODE_ENV
 
 // loading decorator
 export const getLoadingDecorator = (show, hide) => createDecorator(fn => async (...args) => {
@@ -43,19 +45,22 @@ export const setRequestLogDecorator = createDecorator(fn => async (...args) => {
 })
 
 // mock decorator
-export const getMockDecorator = mockFn => createDecorator(fn => (...args) => {
-  if (process.env.NODE_ENV === 'development') {
-    return mockFn(...args)
+export const getMockDecorator = mock => (env = DEVELOPMENT) => createDecorator(fn => (...args) => {
+  if (env === NODE_ENV) {
+    return mock(...args)
   }
   return fn(...args)
 })
 
 // set request header config
-export const setRequestHeaderDecorator = (...headers) => createDecorator(fn => (...args) => fn(...[...args, {headers}]))
+export const setRequestHeaderDecorator = (...headers) => createDecorator(fn => (...args) => fn(...[...args, { headers }]))
+
+// set request config
+export const setRequestConfigDecorator = (...config) => createDecorator(fn => (...args) => fn(...[...args, config]))
 
 // set request delay
 export const setDelayDecorator = (wait = 0) => createDecorator(fn => (...args) => {
-  if (process.env.NODE_ENV === 'development') {
+  if (NODE_ENV === DEVELOPMENT) {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve(fn(...args))
@@ -84,7 +89,7 @@ export const getConfirmDecorator = (...config) => handle => createDecorator(fn =
 })
 
 // set additional extension parameters
-export const setExtraExtensionParameterDecorator = (...extras) => createDecorator((fn) => (...args) => fn(...[...args, {extras}]))
+export const setExtraExtensionParameterDecorator = (...extras) => createDecorator((fn) => (...args) => fn(...[...args, { extras }]))
 
 // set input prompt tips
 export const getPromptDecorator = (...config) => (handle, key) => createDecorator(fn => async (...args) => {
@@ -97,18 +102,18 @@ export const getPromptDecorator = (...config) => (handle, key) => createDecorato
 })
 
 // set response data compose pipe line
-const composeOrPipe = (key = 'compose') => (...handle) => createDecorator(fn => async (...args) => {
+const composeOrPipe = (key = COMPOSE) => (...handle) => createDecorator(fn => async (...args) => {
   const data = await fn(...args)
-  let res = () => {}
-  if (key === 'compose') {
+  let res = _ => _
+  if (key === COMPOSE) {
     res = compose(...handle)
-  } else if (key === 'pipe') {
+  } else if (key === PIPE) {
     res = pipe(...handle)
   }
   return res(data)
 })
-export const setResponseComposeDecorator = composeOrPipe('compose')
-export const setResponsePipeDecorator = composeOrPipe('pipe')
+export const setResponseComposeDecorator = composeOrPipe(COMPOSE)
+export const setResponsePipeDecorator = composeOrPipe(PIPE)
 
 // get cache
 export const getCacheDecorator = (handle) => createDecorator(fn => async (...args) => {

@@ -30,7 +30,15 @@ export const handleResponseDataToList = (field = 'data') => (data = {}) => {
 /**
  * list 数据转换
  * */
-export const handleResponseDataToMap = ({ labelKey = '', valueKey = '' }) => (list = []) => list.map(x => ({...x, label: x[labelKey], value: x[valueKey]}))
+export const handleResponseDataToMap = ({ labelKey = '', valueKey = '' }) => (list = []) => list.map(x => {
+  let label = x
+  let value = x
+  if (isObject(x)) {
+    label = x[labelKey]
+    value = x[valueKey]
+  }
+  return { ...x, label, value }
+})
 
 // 获取缓存中的数据
 export const getCache = (type = 'localStorage') => ({ key }) => {
