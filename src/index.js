@@ -12,6 +12,8 @@ export {
   setRequestHeaderDecorator,
   setDelayDecorator,
   setResponseDataDecorator,
+  setRequestConfigDecorator,
+
   setRequestLogDecorator,
   setResponseComposeDecorator,
   setResponsePipeDecorator

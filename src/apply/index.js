@@ -56,7 +56,7 @@ export const getMockDecorator = mock => (env = DEVELOPMENT) => createDecorator(f
 export const setRequestHeaderDecorator = (...headers) => createDecorator(fn => (...args) => fn(...[...args, { headers }]))
 
 // set request config
-export const setRequestConfigDecorator = (...config) => createDecorator(fn => (...args) => fn(...[...args, config]))
+export const setRequestConfigDecorator = (...config) => createDecorator(fn => (...args) => fn(...[...args, { config }]))
 
 // set request delay
 export const setDelayDecorator = (wait = 0) => createDecorator(fn => (...args) => {

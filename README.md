@@ -121,8 +121,11 @@ const setMockDecorator = getMockDecorator((...arg) => {
   })
 })
 export default new class Api {
-  @setMockDecorator
+  @setMockDecorator('development')
   getList = wrapperGet('api/list')
+  
+  @setMockDecorator('test')
+  getList = wrapperGet('api/list1')
 }()
 ```
 
