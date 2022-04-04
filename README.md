@@ -9,6 +9,7 @@ or
 yarn add decor-core -S
 ```
 
+### get prompt operation
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getPromptDecorator } from 'decor-core'
@@ -21,12 +22,12 @@ const handlePrompt = (args) => new Promise((resolve, reject) => {
     onOk() { resolve({ value }) },
     onCancel() { reject(null) },
     render: (h) => h('Input', {
-      props: { value, autofocus: true, placeholder: '请输入原因' },
+      props: { value, autofocus: true, placeholder: 'Please enter the reason' },
       on: { input: (val) => value = val }
     })
   })
 })
-const setConfirmRefusePromptDecorator = getPromptDecorator({ title: '确定拒绝！' })
+const setConfirmRefusePromptDecorator = getPromptDecorator({ title: 'Determine refused to！' })
 export default new class Api {
   @setConfirmRefusePromptDecorator(handlePrompt, 'reject')
   reject = wrapperGet('api/reject')
@@ -34,6 +35,7 @@ export default new class Api {
 
 ```
 
+### set confirm operation
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getConfirmDecorator } from 'decor-core'
@@ -46,12 +48,14 @@ const handleConfirmation = (args) => new Promise((resolve, reject) => {
     onCancel() { reject(null) }
   })
 })
-const setConfirmDeleteDecorator = getConfirmDecorator({ title: '温馨提示', content: '确认删除该投票吗？' })
+const setConfirmDeleteDecorator = getConfirmDecorator({ title: 'hint', content: 'Are you sure？' })
 export default new class Api {
   @setConfirmDeleteDecorator(handleConfirmation)
   getList = wrapperGet('api/list')
 }()
 ```
+
+### set and get cache data
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getCacheDataDecorator } from 'decor-core'
@@ -67,6 +71,7 @@ export default new class Api {
 }()
 ```
 
+### set extra extension params
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { setExtraExtensionParameterDecorator } from 'decor-core'
@@ -77,6 +82,7 @@ export default new class Api {
 }()
 ```
 
+### set response data transforms or filter
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { setResponseDataDecorator, setResponsePipeDecorator, setResponseComposeDecorator } from 'decor-core'
@@ -96,6 +102,7 @@ export default new class Api {
 }()
 ```
 
+### set request headers
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { setRequestHeaderDecorator } from 'decor-core'
@@ -106,17 +113,18 @@ export default new class Api {
 }()
 ```
 
+### api mock function
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getMockDecorator } from 'decor-core'
 
 const setMockDecorator = getMockDecorator((...arg) => {
-  console.log(arg) // 接口调用处传递的参数，用于判断类型返回结果
+  console.log(arg)
   return Promise.resolve({
     data: [
-      { labels: '未开始', values: 0 },
-      { labels: '进行中', values: 1 },
-      { labels: '已结束', values: 2 },
+      { labels: 'NO START', values: 0 },
+      { labels: 'PENDING', values: 1 },
+      { labels: 'END TIME', values: 2 },
     ]
   })
 })
@@ -129,6 +137,7 @@ export default new class Api {
 }()
 ```
 
+### set response message tips
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getMessageDecorator } from 'decor-core'
@@ -139,11 +148,12 @@ export default new class Api {
   @setMessageDecorator({ msgKey: 'errorMsg' })
   getList = wrapperGet('api/list')
 
-  @setMessageDecorator({ successMsg: '操作成功', errorMsg: '操作失败' })
+  @setMessageDecorator({ successMsg: 'success!', errorMsg: 'error!' })
   getRecord = wrapperGet('api/record')
 }()
 ```
 
+### set request loading
 ```javascript
 import { wrapperGet } from '@/js/http'
 import { getLoadingDecorator } from 'decor-core'
@@ -153,5 +163,49 @@ const setLoadingDecorator = getLoadingDecorator(LoadingBar.start, LoadingBar.fin
 export default new class Api {
   @setLoadingDecorator
   getList = wrapperGet('api/list')
+}()
+```
+
+### set request config
+```javascript
+import { wrapperGet } from '@/js/http'
+import { setRequestConfigDecorator } from 'decor-core'
+
+const config = {
+  url: '/user',
+  baseURL: 'https://some-domain.com/api/',
+  headers: {'X-Requested-With': 'XMLHttpRequest'},
+}
+export default new class ActivityApi{
+  @setRequestConfigDecorator(config)
+  get = wrapperGet('/api/list')
+}()
+```
+
+### set request cancel
+```javascript
+import axios from 'axios'
+import { wrapperGet } from '@/js/http'
+import { setRequestConfigDecorator } from 'decor-core'
+
+const CancelToken = axios.CancelToken
+
+export default new class CouponApi {
+  cancelExector = () => {}
+  cancelToken = null
+
+  constructor() {
+    this.generateCancelToken()
+  }
+
+  generateCancelToken() {
+    this.cancelToken = new CancelToken((c) => this.cancelExecutor = c)
+  }
+
+  get = () => {
+    this.generateCancelToken()
+    const handleSetConfig = setRequestConfigDecorator({ cancelToken: this.cancelToken })
+    return handleSetConfig(wrapperPost('/api/list'))
+  }
 }()
 ```

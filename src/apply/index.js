@@ -1,6 +1,7 @@
 import { createDecorator } from '../core'
 import { compose, pipe } from '../utils'
-import { DEVELOPMENT, COMPOSE, PIPE } from '../constant'
+import { COMPOSE, DEVELOPMENT, PIPE } from '../constant'
+
 const NODE_ENV = process.env.NODE_ENV
 
 // loading decorator
@@ -8,9 +9,7 @@ export const getLoadingDecorator = (show, hide) => createDecorator(fn => async (
   if (show && hide) {
     show()
   }
-  const res = await fn(...args)
-  hide()
-  return res
+  return await fn(...args).finally(hide)
 })
 
 // success or error message notify
