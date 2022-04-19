@@ -9,7 +9,11 @@ export const getLoadingDecorator = (show, hide) => createDecorator(fn => async (
   if (show && hide) {
     show()
   }
-  return await fn(...args).finally(hide)
+  const res = await fn(...args)
+  if (typeof res === 'function') {
+    return res().finally(hide)
+  }
+  return res.finally(hide)
 })
 
 // success or error message notify
@@ -45,33 +49,45 @@ export const setRequestLogDecorator = createDecorator(fn => async (...args) => {
 
 // mock decorator
 export const getMockDecorator = mock => (env = DEVELOPMENT) => createDecorator(fn => (...args) => {
-  if (env === NODE_ENV) {
-    return mock(...args)
-  }
-  return fn(...args)
+  const res = env === NODE_ENV ? mock(...args) : fn(...args)
+  return typeof res === 'function' ? res() : res
 })
 
 // set request header config
-export const setRequestHeaderDecorator = (...headers) => createDecorator(fn => (...args) => fn(...[...args, { headers }]))
+export const setRequestHeaderDecorator = (...headers) => createDecorator(fn => (...args) => {
+  const params = [...args, { headers }]
+  const res = fn(...params)
+  return typeof res === 'function' ? res(...params) : res
+})
 
 // set request config
-export const setRequestConfigDecorator = (...config) => createDecorator(fn => (...args) => fn(...[...args, { config }]))
+export const setRequestConfigDecorator = (...config) => createDecorator(fn => (...args) => {
+  const params = [...args, { config }]
+  const res = fn(...params)
+  return typeof res === 'function' ? res(...params) : res
+})
 
 // set request delay
 export const setDelayDecorator = (wait = 0) => createDecorator(fn => (...args) => {
   if (NODE_ENV === DEVELOPMENT) {
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve(fn(...args))
+        const res = fn(...args)
+        resolve(typeof res === 'function' ? res() : res)
       }, wait)
     })
   }
-  return fn(...args)
+  const res = fn(...args)
+  return typeof res === 'function' ? res() : res
 })
 
 // set response transform to target data
 export const setResponseDataDecorator = handle => createDecorator(fn => async (...args) => {
   const data = await fn(...args)
+  if (typeof data === 'function') {
+    const res = await data()
+    return handle(res)
+  }
   return handle(data)
 })
 
@@ -80,29 +96,34 @@ export const getConfirmDecorator = (...config) => handle => createDecorator(fn =
   const confirm = await handle(...config)
   if (confirm) {
     const res = fn(...args)
-    if (typeof res === 'function') {
-      return res()
-    }
-    return res
+    return typeof res === 'function' ? res() : res
   }
 })
 
 // set additional extension parameters
-export const setExtraExtensionParameterDecorator = (...extras) => createDecorator((fn) => (...args) => fn(...[...args, { extras }]))
+export const setExtraExtensionParameterDecorator = (...extras) => createDecorator((fn) => (...args) => {
+  const params = [...args, { extras }]
+  const res = fn(...params)
+  return typeof res === 'function' ? res(...params) : res
+})
 
 // set input prompt tips
 export const getPromptDecorator = (...config) => (handle, key) => createDecorator(fn => async (...args) => {
   const confirm = await handle(...config)
   if (confirm) {
-    const {value} = confirm
-    args[0] = {...args[0], [key]: value}
-    return fn(...args)
+    const { value } = confirm
+    args[0] = { ...args[0], [key]: value }
+    const res = await fn(...args)
+    return typeof res === 'function' ? res() : res
   }
 })
 
 // set response data compose pipe line
 const composeOrPipe = (key = COMPOSE) => (...handle) => createDecorator(fn => async (...args) => {
-  const data = await fn(...args)
+  let data = await fn(...args)
+  if (typeof data === 'function') {
+    data = await data()
+  }
   let res = _ => _
   if (key === COMPOSE) {
     res = compose(...handle)
@@ -117,7 +138,12 @@ export const setResponsePipeDecorator = composeOrPipe(PIPE)
 // get cache
 export const getCacheDecorator = (handle) => createDecorator(fn => async (...args) => {
   const cache = handle()
-  return cache ? cache : await fn(...args)
+  if (cache) {
+    return cache
+  } else {
+    const res = await fn(...args)
+    return typeof res === 'function' ? res() : res
+  }
 })
 
 // cache
@@ -128,7 +154,8 @@ export const getCacheDataDecorator = (set, get) => (key) => createDecorator(fn =
     return cache
   } else {
     const data = await fn(...args)
-    return set({key: uniqueKey, ...data})
+    const res = typeof data === 'function' ? data() : data
+    return set({key: uniqueKey, ...res})
   }
 })
 

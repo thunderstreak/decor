@@ -61,12 +61,23 @@ import { wrapperGet } from '@/js/http'
 import { getCacheDataDecorator } from 'decor-core'
 import { setCache, getCache } from 'decor-core/handle'
 
-const setSessStorage = setCache('sessStorage')
-const getSessStorage = getCache('sessStorage')
+const setSessStorage = setCache('sessionStorage')
+const getSessStorage = getCache('sessionStorage')
 const setCacheDecorator = getCacheDataDecorator(setSessStorage, getSessStorage)
 
 export default new class Api {
   @setCacheDecorator('uniqueKey')
+  getList = wrapperGet('api/list')
+}()
+```
+
+### set delay
+```javascript
+import { wrapperGet } from '@/js/http'
+import { setDelayDecorator } from 'decor-core'
+
+export default new class Api {
+  @setDelayDecorator(3000)
   getList = wrapperGet('api/list')
 }()
 ```

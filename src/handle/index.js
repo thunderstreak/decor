@@ -24,8 +24,13 @@ export const handleResponseDataToList = (field = 'data') => (data = {}) => {
   if (!data || (isObject(data) && !protoNum)) {
     return []
   }
-  return handleGetTargetFiled(data, field)
+  return data[field]
 }
+
+/*
+* 获取指定字段
+* */
+export const handleResponseTarget = (field = 'data') => (data = {}) => data[field]
 
 /**
  * list 数据转换
@@ -66,4 +71,9 @@ export const setCache = (type = 'localStorage') => ({ key, ...data }) => {
   })
   window[type].setItem(key, value)
   return data
+}
+
+// 执行调用
+export const handleExecutiveInvoking = (value) => {
+  return typeof value === 'function' ? value() : value
 }

@@ -39,6 +39,8 @@ const handleRequestParams = (data = []) => {
       ...first,
       ...temp.extras
     }
+  } else {
+    params = { ...temp.extras }
   }
 
   return params
