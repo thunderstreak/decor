@@ -9,11 +9,11 @@ export const getLoadingDecorator = (show, hide) => createDecorator(fn => async (
   if (show && hide) {
     show()
   }
-  const res = await fn(...args)
+  const res = fn(...args)
   if (typeof res === 'function') {
     return res().finally(hide)
   }
-  return res.finally(hide)
+  return await res.finally(hide)
 })
 
 // success or error message notify

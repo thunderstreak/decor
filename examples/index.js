@@ -6,7 +6,8 @@ import {
   setResponsePipeDecorator,
   setRequestConfigDecorator,
   setExtraExtensionParameterDecorator,
-  getCacheDataDecorator
+  getCacheDataDecorator,
+  getMessageDecorator
 } from '../src'
 import { handleResponseDataToMap, handleResponseTarget } from '../src/handle'
 import { wrapperPost as posts, wrapperGet as gets } from './request/http'
@@ -18,7 +19,8 @@ const setLoading = getLoadingDecorator(() => loading.show({ mask: true, classNam
 const setMock = getMockDecorator(() => {
   return Promise.resolve({
     data: [ { test: 1, api: '2', key: 'num', code: '12' }, { key: 'num1', code: '121' } ],
-    message: ['test']
+    type: ['test'],
+    msg: 'error msg'
   })
 })
 // const handleGetTargetData = handleResponseDataToList('message')
@@ -29,6 +31,7 @@ const setSessStorage = setCache('sessionStorage')
 const getSessStorage = getCache('sessionStorage')
 const setCacheDecorator = getCacheDataDecorator(setSessStorage, getSessStorage)
 
+const setMessageDecorator = getMessageDecorator()
 const API = new class Api {
   @setResponsePipeDecorator(handleGetTargetData, handleGetTargetMap)
   @setCacheDecorator('uniqueKey')
@@ -40,8 +43,10 @@ const API = new class Api {
   @setDelayDecorator(3000)
   getList = gets('/api/list')
 
+  @setMessageDecorator({ msgKey: 'msg' })
   @setLoading
   @setDelayDecorator(5000)
+  @setMock()
   getList1 = gets('/api/list1')
 }()
 
@@ -50,8 +55,14 @@ const API = new class Api {
 // }).catch(e => {
 //   console.log(e)
 // })
-const request = API.getMock(2)
-request.then(res => {
+// const request = API.getMock(2)
+// request.then(res => {
+//   console.log(res)
+// })
+API.getList1().then((res) => {
   console.log(res)
 })
+
+
+
 
